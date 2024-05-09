@@ -31,20 +31,22 @@ class Player2(GameSprite):
         if keys_pressed[K_DOWN] and self.rect.y< 500:
             self.rect.y += self.speed
 class Ball(GameSprite):
+    def __init__(self,player_image,player_x,player_y,w,h,player_speed,speed_y):
+        super().__init__(player_image,player_x,player_y,w,h,player_speed)
+        self.speed_y = speed_y
     def ball_control(self):
         self.rect.x += self.speed
-        self.rect.y += self.speed
+        self.rect.y += self.speed_y
         if self.rect.colliderect(player1.rect) or self.rect.colliderect(player2.rect):
             self.speed *= -1
-        if self.rect.y < 50:
-            self.speed *= -1
-        if self.rect.x > 550 or self.rect.x < 50:
-            self.speed *= -1
-#! у player1 мяч отбивается от задней грани(исправить)!!!
+            self.speed_y *= 1
+        if self.rect.y < 10 or self.rect.y > 650:
+            self.speed_y *= -1
 
-player1 = Player1("board.png",26,330,25,200,5)
-player2 = Player2("board.png",550,330,25,200,5)
-ball = Ball("ball.png",300,350,50,50,3)
+
+player1 = Player1("board.png",26,330,25,200,7)
+player2 = Player2("board.png",550,330,25,200,7)
+ball = Ball("ball.png",300,350,50,50,3,3)
 '''mixer.init()
 mixer.music.load("space.ogg")
 mixer.music.set_volume(0.05)
@@ -70,8 +72,8 @@ while game:
             if e.type == MOUSEBUTTONDOWN and e.button == 1:
                 x,y  = e.pos
                 '''if pausebtn_png.collidepoint(x,y):
-                    pausebtn_png.pause_is_pressed = True'''
-                if finish != True:
+                    pausebtn_png.pause_is_pressed = True
+                    if finish != True:
                         mixer.music.stop()
                         window.blit(pause,(340,250))
                         #window.blit(hint,(325,265))
@@ -79,7 +81,7 @@ while game:
                         finish = True
                 elif finish == True:
                         mixer.music.play()
-                        finish = False
+                        finish = False'''
             if e.type == MOUSEBUTTONDOWN and e.button == 1:
                 x,y  = e.pos
             #if exitbtn_png.collidepoint(x,y):
@@ -91,53 +93,16 @@ while game:
                     if finish != True:
                         if num_fire < 20 and rel_time == False:
                             key_pressed = True'''
-            if e.type == KEYDOWN:
-                if e.key == K_w:
-                    key_pressed_up1 = True
-                if e.key == K_UP:
-                    key_pressed_up2 = True
-                if e.key == K_s:
-                    key_pressed_down1 = True
-                if e.key == K_DOWN:
-                    key_pressed_down2 = True
-            if e.type == KEYUP:
-                if e.key == K_w:
-                    key_pressed_up1 = False
-                if e.key == K_UP:
-                    key_pressed_up2 = False
-                if e.key == K_s:
-                    key_pressed_down1 = False
-                if e.key == K_DOWN:
-                    key_pressed_down2 = False
-    if finish != True:
-        if key_pressed_up1 == True:
-            if player1.rect.y > 0 and player1.rect.y != 0:
-                player1.rect.y -= player1.speed
-        if key_pressed_up2 == True:
-            if player2.rect.y > 0 and player2.rect.y != 0:
-                player2.rect.y -= player2.speed
-        if key_pressed_down1 == True:
-            if player1.rect.y < 500 and player1.rect.y != 500:
-                player1.rect.y += player1.speed
-        if key_pressed_down2 == True:
-            if player2.rect.y < 500 and player2.rect.y != 500:
-                player2.rect.y += player2.speed
                 
                      
                     
     if finish != True:
+        if ball.rect.x < 10 or ball.rect.x > 550:
+            finish = True
         window.blit(background,(0,0))
-        #pausebtn_png.reset()
-        #exitbtn_png.reset()
         player1.reset()
         player2.reset()
         ball.reset()
-        #mega_bullets.draw(window)
-        #mega_bullets.update()
-        #bullets.draw(window)
-        #bullets.update()'''
-        #enemies.draw(window)
-        #asteroids.draw(window)
         player1.control()
         player2.control()
         ball.ball_control()
