@@ -125,11 +125,10 @@ while game:
                      
                     
     if finish != True:
-        if ball.rect.x < 10 or ball.rect.x > 550:
-            if player1_score == 10:
-                finish = True
-            elif player2_score == 10:
-                finish = True
+        if player1_score == 10:
+            finish = True
+        elif player2_score == 10:
+            finish = True
 
         if ball.rect.x > 550:
             player1_score += 1
@@ -166,7 +165,7 @@ while game:
         else:
             loser = "PLAYER_1"
         lose = font1.render(loser+"LOSE!",True,(255,0,0))
-        window.blit(lose,(250,365))
+        window.blit(lose,(240,355))
 
     clock.tick(60)
     display.update()
