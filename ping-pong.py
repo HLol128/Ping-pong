@@ -3,7 +3,7 @@ from pygame import *
 import time as tm
 init() #! инициализация ресурсов библиотеки
 resolution = (600,700)
-window = display.set_mode(resolution)
+window = display.set_mode(resolution,SCALED, vsync=1)
 display.set_caption("Ping-pong")
 background = transform.scale(image.load("ping-pong_field.png"),resolution)
 class GameSprite(sprite.Sprite):
@@ -56,17 +56,31 @@ font.init()
 font1 = font.Font(None,36)
 font2 = font.Font(None,25)
 font3 = font.Font(None,30)
+
 lose = font1.render("YOU LOSE!",True,(255,0,0))
 pause = font3.render("Pause...",True,(255,255,255))
 restart = font2.render("Do you want to start over?Yes(y) or No(n)",True,(255,255,255))
 
+mixer.init()
+mixer.music.load("background_music.ogg")
+mixer.music.set_volume(0.10)
+mixer.music.play()
+
 clock = time.Clock()
+
 key_pressed_up1 = False
 key_pressed_up2 = False
 key_pressed_down1 = False
 key_pressed_down2 = False
 finish = False
 game = True
+
+player1_score = 0
+player2_score = 0
+
+text_player1_score = font1.render("Счёт:" + str(player1_score),1,(255,255,255))
+text_player2_score = font1.render("Счёт:" + str(player2_score),1, (255,255,255))
+
 while game:
     for e in event.get():
             if e.type == MOUSEBUTTONDOWN and e.button == 1:
@@ -93,19 +107,66 @@ while game:
                     if finish != True:
                         if num_fire < 20 and rel_time == False:
                             key_pressed = True'''
+    keys_pressed = key.get_pressed()
+    if keys_pressed[K_r]:
+        if finish != False:
+            ball.rect.y = 330
+            ball.rect.x = 290
+            player1.rect.y = 330
+            player2.rect.y = 330
+            player1_score = 0
+            player2_score = 0
+            finish = False
+            ball.speed *= -1
+            ball.speed_y *= -1
+            mixer.music.play()
+            
                 
                      
                     
     if finish != True:
         if ball.rect.x < 10 or ball.rect.x > 550:
-            finish = True
+            if player1_score == 10:
+                finish = True
+            elif player2_score == 10:
+                finish = True
+
+        if ball.rect.x > 550:
+            player1_score += 1
+            ball.rect.x = 300
+            ball.rect.y = 350
+            ball.speed_y *= -1
+            ball.speed *= -1
+
+        if ball.rect.x < 10:
+            player2_score +=1
+            ball.rect.x = 300
+            ball.rect.y = 350
+            ball.speed_y *= -1
+            ball.speed *= -1
+
+        text_player1_score = font1.render("Счёт:" + str(player1_score),1,(255,255,255))
+        text_player2_score = font1.render("Счёт:" + str(player2_score),1, (255,255,255))
+
         window.blit(background,(0,0))
+        window.blit(text_player1_score,(15,20))
+        window.blit(text_player2_score,(505,20))
+
         player1.reset()
         player2.reset()
         ball.reset()
         player1.control()
         player2.control()
         ball.ball_control()
+    else:
+        mixer.music.stop()
+        loser = None
+        if player1_score > player2_score:
+            loser = "PLAYER_2"
+        else:
+            loser = "PLAYER_1"
+        lose = font1.render(loser+"LOSE!",True,(255,0,0))
+        window.blit(lose,(250,365))
 
     clock.tick(60)
     display.update()
