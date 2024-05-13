@@ -166,6 +166,7 @@ while game:
             loser = "PLAYER_1"
         lose = font1.render(loser+"LOSE!",True,(255,0,0))
         window.blit(lose,(240,355))
+        #test commit
 
     clock.tick(60)
     display.update()
