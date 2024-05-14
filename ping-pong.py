@@ -37,20 +37,55 @@ class Ball(GameSprite):
     def ball_control(self):
         self.rect.x += self.speed
         self.rect.y += self.speed_y
-        if self.rect.colliderect(player1.rect) or self.rect.colliderect(player2.rect):
+
+        if (player1.rect.topright[1] - self.rect.topleft[1]) <= 5 or (player1.rect.topright[1] - self.rect.left) <= 5 or (player1.rect.topright[1] - self.rect.bottomleft[1]) <= 5:
+            self.rect.x *= -1
+        if (player2.rect.topleft[1] - self.rect.topright[1]) <= 5 or (player2.rect.topleft[1] - self.rect.right) <= 5 or (player2.rect.topleft[1] - self.rect.bottomright[1]) <= 5:
+            self.rect.x *= -1
+        if (player1.rect.right - self.rect.topleft[1]) <= 5 or (player1.rect.right - self.rect.left) <= 5 or (player1.rect.right - self.rect.bottomleft[1]):
+            self.rect.x *= -1
+        if (player2.rect.left - self.rect.topright[1]) <= 5 or (player2.rect.left - self.rect.right) <= 5 or (player2.rect.left - self.rect.bottomright[1]):
+            self.rect.x *= -1
+        if (player1.rect.bottomright[1] - self.rect.topleft[1]) <= 5 or (player1.rect.bottomright[1] - self.rect.left) <= 5 or (player1.rect.bottomright[1] - self.rect.bottomleft[1]):
+            self.rect.x *= -1
+        if (player2.rect.bottomleft[1] - self.rect.topright[1]) <= 5 or (player2.rect.bottomleft[1] - self.rect.right) <= 5 or (player2.rect.bottomleft[1] - self.rect.bottomright[1]):
+            self.rect.x *= -1
+
+
+
+
+
+        '''if self.rect.colliderect(player1.rect) or self.rect.colliderect(player2.rect):
             self.speed *= -1
-            self.speed_y *= 1
+            self.speed_y *= 1'''
         if self.rect.y < 10 or self.rect.y > 650:
             self.speed_y *= -1
+class Button_PNG():
+    def __init__(self,btn_image,btn_x,btn_y,w,h):
+        self.image = transform.scale(image.load(btn_image),(w,h))
+        self.rect = self.image.get_rect()
+        self.rect.x = btn_x
+        self.rect.y = btn_y
+        self.pause_is_pressed = False
+
+    def collidepoint(self,x,y):
+        return self.rect.collidepoint(x,y)
+
+    def reset(self):
+        window.blit(self.image,(self.rect.x,self.rect.y))
+
 
 
 player1 = Player1("board.png",26,330,25,200,7)
 player2 = Player2("board.png",550,330,25,200,7)
 ball = Ball("ball.png",300,350,50,50,3,3)
-'''mixer.init()
-mixer.music.load("space.ogg")
-mixer.music.set_volume(0.05)
-mixer.music.play()'''
+
+pausebtn_png = Button_PNG("pause.png",480,5,45,45)
+#exitbtn_png = Button_PNG("exit.png",540,5,45,45)
+
+
+
+
 
 font.init()
 font1 = font.Font(None,36)
@@ -83,19 +118,20 @@ text_player2_score = font1.render("Счёт:" + str(player2_score),1, (255,255,2
 
 while game:
     for e in event.get():
-            if e.type == MOUSEBUTTONDOWN and e.button == 1:
-                x,y  = e.pos
-                '''if pausebtn_png.collidepoint(x,y):
-                    pausebtn_png.pause_is_pressed = True
-                    if finish != True:
-                        mixer.music.stop()
-                        window.blit(pause,(340,250))
-                        #window.blit(hint,(325,265))
-                        #pausebtn_png.pause_is_pressed = False
-                        finish = True
-                elif finish == True:
-                        mixer.music.play()
-                        finish = False'''
+            if finish != True or pausebtn_png.pause_is_pressed != True:
+                if e.type == MOUSEBUTTONDOWN and e.button == 1:
+                    x,y  = e.pos
+                    if pausebtn_png.collidepoint(x,y):
+                        pausebtn_png.pause_is_pressed = True
+                        if finish != True:
+                            mixer.music.stop()
+                            window.blit(pause,(340,250))
+                            #window.blit(hint,(325,265))
+                            pausebtn_png.pause_is_pressed = False
+                            finish = True
+                    elif finish == True:
+                            mixer.music.play()
+                            finish = False
             if e.type == MOUSEBUTTONDOWN and e.button == 1:
                 x,y  = e.pos
             #if exitbtn_png.collidepoint(x,y):
@@ -130,7 +166,7 @@ while game:
         elif player2_score == 10:
             finish = True
 
-        if ball.rect.x > 550:
+        if ball.rect.x > 530:
             player1_score += 1
             ball.rect.x = 300
             ball.rect.y = 350
@@ -157,15 +193,17 @@ while game:
         player1.control()
         player2.control()
         ball.ball_control()
+        pausebtn_png.reset()
     else:
-        mixer.music.stop()
-        loser = None
-        if player1_score > player2_score:
-            loser = "PLAYER_2"
-        else:
-            loser = "PLAYER_1"
-        lose = font1.render(loser+"LOSE!",True,(255,0,0))
-        window.blit(lose,(240,355))
+        if pausebtn_png.pause_is_pressed != True:
+            mixer.music.stop()
+            loser = None
+            if player1_score > player2_score:
+                loser = "PLAYER_2"
+            else:
+                loser = "PLAYER_1"
+            lose = font1.render(loser+"LOSE!",True,(255,0,0))
+            window.blit(lose,(240,355))
         #test commit
 
     clock.tick(60)
