@@ -181,13 +181,13 @@ while game:
         exitbtn_png.reset()
 
         if player1_score == 10:
-            lose = font1.render("Player2" + "LOSE!",True,(255,0,0))
+            lose = font1.render("Player2" + " LOSE!",True,(255,0,0))
             hint = font2.render("Press 'r' to restart the game...",True,(255,255,255))
             window.blit(lose,(200,355))
             window.blit(hint,(220,390))
             finish = True
         elif player2_score == 10:
-            lose = font1.render("Player1" + "LOSE!",True,(255,0,0))
+            lose = font1.render("Player1" + " LOSE!",True,(255,0,0))
             hint = font2.render("Press 'r' to restart the game...",True,(255,255,255))
             window.blit(lose,(240,355))
             window.blit(hint,(220,390))
